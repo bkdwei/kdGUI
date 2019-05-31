@@ -7,7 +7,88 @@ from tkinter import ttk, StringVar, Widget
 import tkinter
 from tkinter.constants import VERTICAL, HORIZONTAL, N, E, S, W
 
+_default_root = None
 
+
+class Window(tkinter.Tk):
+
+    GRID = "grid"
+
+    def __init__(self, title=None):
+        if title :
+            super().__init__(className=title)
+        else:
+            super().__init__()
+        self.layout = VERTICAL
+        self.rowIndex = 0 
+        self.columnIndex = 0
+            
+        global _default_root
+        _default_root = self
+        
+    def run(self):
+        self.mainloop()
+
+    def setLayout(self, layout):
+        self.layout = layout    
+
+    def addWidget(self, widget, row=None, column=None):
+        if self.layout == VERTICAL:
+            print(self.rowIndex, self.columnIndex, widget.widgetName)
+            widget.grid(row=self.rowIndex, column=self.columnIndex)
+            self.rowIndex += 1
+        elif self.layout == HORIZONTAL :
+            widget.grid(row=self.rowIndex, column=self.columnIndex)
+            self.columnIndex += 1
+        elif self.layout == self.GRID :
+            if row == None:
+                raise RuntimeError("row can not be None")
+            if column == None :
+                raise RuntimeError("column can not be None")
+            widget.grid(row=row, column=column)
+
+
+class HorizotalLayout(tkinter.LabelFrame):
+
+    def __init__(self, text=None, parent=None):
+        if not parent :
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, bd=10, master=parent)  
+#         self.grid(column=0, row=0, sticky=(N, W, E, S))
+#         self.columnconfigure(0, weight=1)
+#         self.rowconfigure(0, weight=1)
+#         self.cnf = {"text":text, "bd":10, "height":300, "width":300}
+        self.rowIndex = 0
+#         self["bg"] = "blue"
+#         self["bd"] = 5
+#         self["height"] = 300
+#         self["width"] = 300
+    
+    def setRowIndex(self, index):
+        self.rowIndex = index
+        
+    def addWidget(self, widget):
+        widget.grid(row=self.rowIndex, column=0)
+        print(self.rowIndex, widget.widgetName)
+        self.rowIndex += 1
+
+
+class GridLayout(tkinter.LabelFrame):
+
+    def __init__(self, text=None, parent=None):
+        if not parent :
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, bd=10, master=parent)  
+
+    def setRowIndex(self, index):
+        self.rowIndex = index
+        
+    def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
+        widget.grid(row=row, column=column , rowspan=rowspan, columnspan=columnspan, sticky="w" + "e")
+
+                
 class Label(tkinter.Label):
     """
     标签
@@ -111,78 +192,23 @@ class RadioButtonGroup(StringVar):
         super().__init__()
 
 
-class Window(tkinter.Tk):
+class LineEdit(ttk.Entry):
 
-    GRID = "grid"
+    def __init__(self, defaultValue=None, parent=None):
+        super().__init__(master=parent)
+        self.contents = StringVar()
+        self["textvariable"] = self.contents
+        if defaultValue:
+            self.contents.set(defaultValue)
 
-    def __init__(self):
-        super().__init__()  
-        self.layout = VERTICAL
-        self.rowIndex = 0 
-        self.columnIndex = 0
-        
-    def run(self):
-        self.mainloop()
+    def text(self):
+        return self.contents.get()
 
-    def setLayout(self, layout):
-        self.layout = layout    
-
-    def addWidget(self, widget, row=None, column=None):
-#         widget.master = self
-#         widget.tk = self.tk
-        Widget.__init__(widget, self, widget.widgetName, widget.cnf, {}, ())
-#         widget._setup(self, None)
-        if self.layout == VERTICAL:
-            print(self.rowIndex, self.columnIndex, widget.widgetName)
-            widget.grid(row=self.rowIndex, column=self.columnIndex)
-            self.rowIndex += 1
-        elif self.layout == HORIZONTAL :
-            widget.grid(row=self.rowIndex, column=self.columnIndex)
-            self.columnIndex += 1
-        elif self.layout == self.GRID :
-            if row == None:
-                raise RuntimeError(" row can not be None")
-            if column == None :
-                raise RuntimeError("column can not be None")
-            widget.grid(row=row, column=column)
+    def setText(self, text):
+        self.contents.set(text)
 
 
-class HorizotalLayout(tkinter.LabelFrame):
+class CheckBox(ttk.Checkbutton):
 
     def __init__(self, text=None, parent=None):
-        super().__init__(text=text, bd=10, master=parent)  
-#         self.grid(column=0, row=0, sticky=(N, W, E, S))
-#         self.columnconfigure(0, weight=1)
-#         self.rowconfigure(0, weight=1)
-        self.cnf = {"text":text, "bd":10, "height":300, "width":300}
-        self.rowIndex = 0
-#         self["bg"] = "blue"
-#         self["bd"] = 5
-        self["height"] = 300
-        self["width"] = 300
-    
-    def setRowIndex(self, index):
-        self.rowIndex = index
-        
-    def addWidget(self, widget):
-#         widget.master = self
-#         widget.tk = self
-#         name = None
-#         if not name:
-#             name = repr(id(self))
-#         self._name = name
-#         master = self
-#         if master._w == '.':
-#             widget._w = '.' + name
-#         else:
-#             widget._w = master._w + '.' + name
-#         widget.children = {}
-#         if widget._name in widget.master.children:
-#             widget.master.children[widget._name].destroy()
-#         widget.master.children[widget._name] = self
-        Widget.__init__(widget, self, widget.widgetName, widget.cnf, {}, ())
-        
-#         widget.pack()
-        widget.grid(row=self.rowIndex, column=0)
-        print(self.rowIndex, widget.widgetName)
-        self.rowIndex += 1
+        super().__init__(master=parent, text=text)
