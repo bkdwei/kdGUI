@@ -58,6 +58,26 @@ gl.addWidget(cb_debug, 3, 1)
 gl.addWidget(cb_info, 3, 2)
 gl.addWidget(cb_warn, 3, 4)
 gl.addWidget(cb_error, 3, 5)
+
+# 第五行
+lb_method = Label("方法", gl)
+le_method = LineEdit(None, gl)
+lb_keyword = Label("关键字", gl)
+le_keyword = LineEdit(None, gl)
+gl.addWidget(lb_method, 4, 0)
+gl.addWidget(le_method, 4, 1, 1, 2)
+gl.addWidget(lb_keyword, 4, 3)
+gl.addWidget(le_keyword, 4, 4, 1, 2)
+
+vl = VerticalLayout("结果", win)
+win.addWidget(vl)
+
+tb_result = Label("", vl)
+tb_result.setHeight(10)
+statusbar = Label("状态栏", vl)
+statusbar.setHeight(2)
+vl.addWidget(tb_result)
+vl.addWidget(statusbar)
                   
 win.run()
 

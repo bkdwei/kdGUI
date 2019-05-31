@@ -35,7 +35,7 @@ class Window(tkinter.Tk):
     def addWidget(self, widget, row=None, column=None):
         if self.layout == VERTICAL:
             print(self.rowIndex, self.columnIndex, widget.widgetName)
-            widget.grid(row=self.rowIndex, column=self.columnIndex)
+            widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
             self.rowIndex += 1
         elif self.layout == HORIZONTAL :
             widget.grid(row=self.rowIndex, column=self.columnIndex)
@@ -72,6 +72,31 @@ class HorizotalLayout(tkinter.LabelFrame):
         widget.grid(row=self.rowIndex, column=0)
         print(self.rowIndex, widget.widgetName)
         self.rowIndex += 1
+
+
+class VerticalLayout(tkinter.LabelFrame):
+
+    def __init__(self, text=None, parent=None):
+        if not parent :
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, bd=10, master=parent)  
+#         self.grid(column=0, row=0, sticky=(N, W, E, S))
+#         self.columnconfigure(0, weight=1)
+#         self.rowconfigure(0, weight=1)
+#         self.cnf = {"text":text, "bd":10, "height":300, "width":300}
+        self.columnIndex = 0
+#         self["bg"] = "blue"
+#         self["bd"] = 5
+#         self["height"] = 300
+#         self["width"] = 300
+    
+    def setHeight(self, height):
+        self["height"] = height
+        
+    def addWidget(self, widget):
+        widget.grid(row=0, column=self.columnIndex)
+        self.columnIndex += 1
 
 
 class GridLayout(tkinter.LabelFrame):
@@ -120,6 +145,9 @@ class Label(tkinter.Label):
 
     def clear(self):
         self["text"] = ""
+    
+    def setHeight(self, height):
+        self["height"] = height        
 
 
 class Button(ttk.Button):
