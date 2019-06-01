@@ -5,7 +5,7 @@ Created on 2019年5月25日
 '''
 from tkinter import ttk, StringVar, Widget
 import tkinter
-from tkinter.constants import VERTICAL, HORIZONTAL, N, E, S, W, BOTH, YES, LEFT
+from tkinter.constants import *
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
 
@@ -237,6 +237,12 @@ class RadioButtonGroup(StringVar):
         super().__init__()
 
 
+class CheckBox(ttk.Checkbutton):
+
+    def __init__(self, text=None, parent=None):
+        super().__init__(master=parent, text=text)
+
+        
 class LineEdit(ttk.Entry):
 
     def __init__(self, defaultValue=None, parent=None):
@@ -252,8 +258,130 @@ class LineEdit(ttk.Entry):
     def setText(self, text):
         self.contents.set(text)
 
+    def alignment(self):
+        return self["justify"]
 
-class CheckBox(ttk.Checkbutton):
+    def clear(self):
+        self.contents.set(None)
 
-    def __init__(self, text=None, parent=None):
-        super().__init__(master=parent, text=text)
+    def home(self):
+        self.icursor(0)
+
+    def isReadOnly(self):
+        return self["state"] == "normal"
+
+    def selectAll(self):
+        self.select_range(0, len(self.get()))
+
+    def setAlignment(self, alignment):
+        self["justify"] = alignment
+
+    def setReadOnly(self, boolean):
+        if boolean:
+            self["state"] = "disable"
+        else :
+            self["state"] = "normal"
+
+
+class ListWidget(tkinter.Listbox):
+
+    def __init__(self, parent=None):
+        super().__init__(master=parent)
+
+    def addItem(self, item):
+        self.insert(END, item)
+
+    def setSelectionModel(self, mode):
+        self["selectmode"] = mode
+
+    def addItems(self, items):
+        self.insert(END, items)
+
+    def insertItems(self, index, items):
+        self.insert(index, items)
+
+    def removeItemWidget(self, beginIndex, endIndex=None):
+        self.delete(beginIndex, endIndex)
+
+    def count(self):
+        return self.size()
+
+    def item(self, beiginIndex, endIndex=None):
+        return self.get(beiginIndex, endIndex)
+
+    def currentRow(self):
+        return self.curselection()
+
+    def itemDoubleClicked(self, command):
+        self.bind('<Double-Button-1>', command)
+
+    def setCurrentRow(self, index):
+        self.activate(index)
+
+
+class TreeWidget(ttk.Treeview):
+
+    def __init__(self, parent=None):
+        super().__init__(master=parent)
+
+    def addTopLevelItem(self, item):
+        self.insert('', 'end', id(item), text=item)
+
+    def collapseItem(self, item):
+        self.item(item, open=False)
+
+    def expandItem(self, item):
+        self.item(item, open=True)
+
+    def currentItem(self):
+        item = self.selesction()
+        print("you clicked on ", str(item))
+        return item
+
+    def selectedItems(self):
+        return self.selection()
+
+    def addChildren(self, item, children):
+        self.set_children(item, children)
+
+    def clicked(self):
+        self.bind("Button-1", self.currentItem)
+
+    def doubleClick(self, command):
+        self.bind("<Double-1>", command)
+
+    def setHeader(self, columnIndex, text, width):
+        self.heading("#" + columnIndex , text=text)
+        self.column("#" + columnIndex, width=width)
+
+
+class ComboBox(ttk.Combobox):
+        
+    def __init__(self, parent=None):
+        super().__init__(master=parent)
+        self.values = StringVar()
+        self["textvariable"] = self.values
+
+    def addItems(self, items):
+        self.values.apend(items)
+
+    def addItem(self, item):
+        self.values.apend(item)
+
+    def count(self):
+        return  len(self.values)
+
+    def clear(self):
+        self.values.clear()
+
+    def currentText(self):
+        return self.current()
+
+    def setCurrentIndex(self, index):
+        self.currentText(index)
+
+    def clicked(self, command):
+        self.bind("<<ComboboxSelected>>", command)
+
+    def setValues(self, values):
+        self["value"] = values
