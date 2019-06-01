@@ -5,18 +5,20 @@ Created on 2019年5月25日
 '''
 from tkinter import ttk, StringVar, Widget
 import tkinter
-from tkinter.constants import VERTICAL, HORIZONTAL, N, E, S, W
+from tkinter.constants import VERTICAL, HORIZONTAL, N, E, S, W, BOTH, YES, LEFT
+from ttkthemes import ThemedTk
+from ttkthemes._widget import ThemedWidget
 
 _default_root = None
 
 
-class Window(tkinter.Tk):
+class Window(ThemedTk):
 
     GRID = "grid"
 
     def __init__(self, title=None):
         if title :
-            super().__init__(className=title)
+            super().__init__(className=title, theme="aquativo")
         else:
             super().__init__()
         self.layout = VERTICAL
@@ -35,11 +37,13 @@ class Window(tkinter.Tk):
     def addWidget(self, widget, row=None, column=None):
         if self.layout == VERTICAL:
             print(self.rowIndex, self.columnIndex, widget.widgetName)
-            widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
-            self.rowIndex += 1
+#             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
+#             self.rowIndex += 1
+            widget.pack(fill=BOTH, expand=YES)
         elif self.layout == HORIZONTAL :
-            widget.grid(row=self.rowIndex, column=self.columnIndex)
-            self.columnIndex += 1
+#             widget.grid(row=self.rowIndex, column=self.columnIndex)
+#             self.columnIndex += 1
+            widget.pack(fill=BOTH, expand=YES, side=LEFT)
         elif self.layout == self.GRID :
             if row == None:
                 raise RuntimeError("row can not be None")
@@ -47,14 +51,20 @@ class Window(tkinter.Tk):
                 raise RuntimeError("column can not be None")
             widget.grid(row=row, column=column)
 
+    def setTitle(self, title):
+        self.title(title)
 
-class HorizotalLayout(tkinter.LabelFrame):
+    def setTheme(self, theme_name):
+        ThemedWidget.set_theme(self, theme_name)
+
+
+class VerticalLayout(tkinter.LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent :
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=10, master=parent)  
+        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
 #         self.rowconfigure(0, weight=1)
@@ -69,18 +79,19 @@ class HorizotalLayout(tkinter.LabelFrame):
         self.rowIndex = index
         
     def addWidget(self, widget):
-        widget.grid(row=self.rowIndex, column=0)
+#         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
         print(self.rowIndex, widget.widgetName)
         self.rowIndex += 1
+        widget.pack(fill=BOTH, expand=YES)
 
 
-class VerticalLayout(tkinter.LabelFrame):
+class HorizotalLayout(tkinter.LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent :
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=10, master=parent)  
+        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
 #         self.rowconfigure(0, weight=1)
@@ -95,8 +106,9 @@ class VerticalLayout(tkinter.LabelFrame):
         self["height"] = height
         
     def addWidget(self, widget):
-        widget.grid(row=0, column=self.columnIndex)
+#         widget.grid(row=0, column=self.columnIndex, sticky='nsew')
         self.columnIndex += 1
+        widget.pack(fill=BOTH, expand=YES, side=LEFT)
 
 
 class GridLayout(tkinter.LabelFrame):
@@ -105,14 +117,16 @@ class GridLayout(tkinter.LabelFrame):
         if not parent :
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=10, master=parent)  
-
+        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
+            
     def setRowIndex(self, index):
         self.rowIndex = index
         
     def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
-        widget.grid(row=row, column=column , rowspan=rowspan, columnspan=columnspan, sticky="w" + "e")
-
+        self.columnconfigure(column, weight=1)
+        self.rowconfigure(row, weight=1)  
+        widget.grid(row=row, column=column , rowspan=rowspan, columnspan=columnspan, sticky=N + S + W + E)
+        
                 
 class Label(tkinter.Label):
     """
@@ -147,7 +161,10 @@ class Label(tkinter.Label):
         self["text"] = ""
     
     def setHeight(self, height):
-        self["height"] = height        
+        self["height"] = height   
+
+    def setBackgroundColor(self, color):
+        self["background"] = color     
 
 
 class Button(ttk.Button):

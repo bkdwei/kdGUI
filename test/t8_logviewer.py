@@ -3,22 +3,39 @@ Created on 2019年5月26日
 
 @author: bkd
 '''
+import time
 from tkinter import VERTICAL
+from ttkthemes import THEMES
+
 from kdGUI import *
 
 
 def aa():
     print("in aa")
+#     for theme in THEMES:
+#         global win
+#         win.setTheme(theme)
+#         print("theme:" + theme)
+#         time.sleep(5)
+    global  theme_index
+    global tb_result
+    win.setTheme(THEMES[theme_index])
+    print(THEMES[theme_index])
+    tb_result.setText(THEMES[theme_index])
+    theme_index += 1
 
 
+theme_index = 0
 win = Window("Java日志查看器")
-win.setLayout(VERTICAL)
+# win.setLayout(HORIZONTAL)
+win.setTheme(THEMES[0])
 
 gl = GridLayout("导入和查询", win)
 win.addWidget(gl)
 
 # 第一行
 pb_open = Button("打开日志文件", gl)
+pb_open.click(aa)
 lb_encoding = Label("编码格式", gl)
 le_encoding = LineEdit("GB2312", gl)
 pb_query = Button("查询", gl)
@@ -72,12 +89,13 @@ gl.addWidget(le_keyword, 4, 4, 1, 2)
 vl = VerticalLayout("结果", win)
 win.addWidget(vl)
 
-tb_result = Label("", vl)
+tb_result = Label("ss", vl)
 tb_result.setHeight(10)
+tb_result.setBackgroundColor("white")
 statusbar = Label("状态栏", vl)
 statusbar.setHeight(2)
 vl.addWidget(tb_result)
 vl.addWidget(statusbar)
-                  
+   
 win.run()
 
