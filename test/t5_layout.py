@@ -37,6 +37,8 @@ hLayout1 = HorizotalLayout("abc", win)
 win.addWidget(hLayout1)
 hLayout1.addWidget(Button("bkd8", hLayout1))
 # hLayout1.addWidget(Button("bkd9"))
-                  
+c = hLayout.winfo_children()
+for a in c:
+    print("df" + a["text"])                  
 win.run()
 

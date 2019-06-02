@@ -3,9 +3,11 @@ Created on 2019年5月25日
 
 @author: bkd
 '''
+from tkinter import *
 from tkinter import ttk, StringVar, Widget
 import tkinter
 from tkinter.constants import *
+from tkinter.scrolledtext import ScrolledText
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
 
@@ -27,6 +29,10 @@ class Window(ThemedTk):
             
         global _default_root
         _default_root = self
+        self.statusbar = Label("状态栏", self)
+        self.statusbar.setAnchor("w")
+#         self.addWidget(self.statusbar, expand=YES)
+        self.statusbar.pack(fill=BOTH, expand=YES, side=BOTTOM,)
         
     def run(self):
         self.mainloop()
@@ -34,7 +40,7 @@ class Window(ThemedTk):
     def setLayout(self, layout):
         self.layout = layout    
 
-    def addWidget(self, widget, row=None, column=None):
+    def addWidget(self, widget, row=None, column=None, expand=NO):
         if self.layout == VERTICAL:
             print(self.rowIndex, self.columnIndex, widget.widgetName)
 #             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
@@ -43,7 +49,7 @@ class Window(ThemedTk):
         elif self.layout == HORIZONTAL :
 #             widget.grid(row=self.rowIndex, column=self.columnIndex)
 #             self.columnIndex += 1
-            widget.pack(fill=BOTH, expand=YES, side=LEFT)
+            widget.pack(fill=BOTH, expand=expand, side=LEFT)
         elif self.layout == self.GRID :
             if row == None:
                 raise RuntimeError("row can not be None")
@@ -56,6 +62,19 @@ class Window(ThemedTk):
 
     def setTheme(self, theme_name):
         ThemedWidget.set_theme(self, theme_name)
+
+    def showMaximized(self):
+        w, h = self.maxsize()
+        self.geometry("{}x{}".format(w, h))
+
+    def showFullScreen(self):
+        self.attributes("-fullscreen", True)
+
+    def children(self):
+        return self.winfo_children()
+
+    def showMessage(self, msg):
+        self.statusbar.setText(msg)
 
 
 class VerticalLayout(tkinter.LabelFrame):
@@ -80,9 +99,11 @@ class VerticalLayout(tkinter.LabelFrame):
         
     def addWidget(self, widget):
 #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
-        print(self.rowIndex, widget.widgetName)
         self.rowIndex += 1
         widget.pack(fill=BOTH, expand=YES)
+
+    def childrens(self):
+        return self.winfo_children()
 
 
 class HorizotalLayout(tkinter.LabelFrame):
@@ -110,6 +131,9 @@ class HorizotalLayout(tkinter.LabelFrame):
         self.columnIndex += 1
         widget.pack(fill=BOTH, expand=YES, side=LEFT)
 
+    def children(self):
+        return self.winfo_children()
+
 
 class GridLayout(tkinter.LabelFrame):
 
@@ -118,6 +142,8 @@ class GridLayout(tkinter.LabelFrame):
             global _default_root
             parent = _default_root
         super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
+        self.rowIndex = 0
+        self.columnIndex = 0
             
     def setRowIndex(self, index):
         self.rowIndex = index
@@ -126,7 +152,20 @@ class GridLayout(tkinter.LabelFrame):
         self.columnconfigure(column, weight=1)
         self.rowconfigure(row, weight=1)  
         widget.grid(row=row, column=column , rowspan=rowspan, columnspan=columnspan, sticky=N + S + W + E)
-        
+
+    def addWidgetOnRow(self, widget):
+        self.columnconfigure(self.columnIndex, weight=1)
+        self.rowconfigure(self.rowIndex, weight=1)
+        widget.grid(row=self.rowIndex, column=self.columnIndex , rowspan=1, columnspan=1, sticky=N + S + W + E)
+        self.rowIndex = self.rowIndex + 1
+        print("self.rowIndex", self.rowIndex)
+
+    def setWidth(self, width):
+        self["width"] = width
+
+    def children(self):
+        return self.winfo_children()
+
                 
 class Label(tkinter.Label):
     """
@@ -166,6 +205,9 @@ class Label(tkinter.Label):
     def setBackgroundColor(self, color):
         self["background"] = color     
 
+    def setAnchor(self, anchor):
+        self['anchor'] = anchor
+
 
 class Button(ttk.Button):
     """
@@ -184,6 +226,9 @@ class Button(ttk.Button):
 
     def setText(self, text):
         self["text"] = text
+
+    def doubleClick(self, function):
+        self.bind("<Double-Button-1>", function)
 
 
 class RadioButton(tkinter.Radiobutton):
@@ -237,7 +282,7 @@ class RadioButtonGroup(StringVar):
         super().__init__()
 
 
-class CheckBox(ttk.Checkbutton):
+class CheckButton(ttk.Checkbutton):
 
     def __init__(self, text=None, parent=None):
         super().__init__(master=parent, text=text)
