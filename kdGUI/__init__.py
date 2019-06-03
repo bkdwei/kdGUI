@@ -4,10 +4,10 @@ Created on 2019年5月25日
 @author: bkd
 '''
 from tkinter import *
-from tkinter import ttk, StringVar, Widget
-import tkinter
+from tkinter import ttk
 from tkinter.constants import *
 from tkinter.scrolledtext import ScrolledText
+
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
 
@@ -76,8 +76,11 @@ class Window(ThemedTk):
     def showMessage(self, msg):
         self.statusbar.setText(msg)
 
+    def addMenu(self, menuBar):
+        self.config(menu=menuBar)
 
-class VerticalLayout(tkinter.LabelFrame):
+
+class VerticalLayout(LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent :
@@ -106,7 +109,7 @@ class VerticalLayout(tkinter.LabelFrame):
         return self.winfo_children()
 
 
-class HorizotalLayout(tkinter.LabelFrame):
+class HorizotalLayout(LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent :
@@ -135,7 +138,7 @@ class HorizotalLayout(tkinter.LabelFrame):
         return self.winfo_children()
 
 
-class GridLayout(tkinter.LabelFrame):
+class GridLayout(LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent :
@@ -167,7 +170,7 @@ class GridLayout(tkinter.LabelFrame):
         return self.winfo_children()
 
                 
-class Label(tkinter.Label):
+class Label(Label):
     """
     标签
     """
@@ -231,7 +234,7 @@ class Button(ttk.Button):
         self.bind("<Double-Button-1>", function)
 
 
-class RadioButton(tkinter.Radiobutton):
+class RadioButton(Radiobutton):
     """
     单选按钮
     """
@@ -328,7 +331,7 @@ class LineEdit(ttk.Entry):
             self["state"] = "normal"
 
 
-class ListWidget(tkinter.Listbox):
+class ListWidget(Listbox):
 
     def __init__(self, parent=None):
         super().__init__(master=parent)
@@ -430,3 +433,26 @@ class ComboBox(ttk.Combobox):
 
     def setValues(self, values):
         self["value"] = values
+
+
+class Menu(Menu):
+
+    def __init__(self, tearoff=None, parent=None):
+        super().__init__(master=parent, tearoff=False)
+
+    def addAction(self, text, function=None):
+        self.add_command(label=text, command=function)
+
+    def addSeparator(self):
+        self.add_separator()
+
+    def addMenu(self, text, menu):
+        self.add_cascade(label=text, menu=menu)
+
+
+def addContextMenu(widget, menu):
+
+    def popup(event):
+        menu.post(event.x_root, event.y_root)
+
+    widget.bind("<Button-3>", popup)
