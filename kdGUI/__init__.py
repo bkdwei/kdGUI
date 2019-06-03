@@ -169,7 +169,32 @@ class GridLayout(LabelFrame):
     def children(self):
         return self.winfo_children()
 
-                
+
+class Container(LabelFrame):
+
+    def __init__(self, text=None, parent=None):
+        if not parent :
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')
+        self.layout = VERTICAL
+    
+    def setLayout(self, layout):
+        self.layout = layout            
+
+    def addWidget(self, widget, row=None, column=None, expand=NO):
+        if self.layout == VERTICAL:
+            widget.pack(fill=BOTH, expand=YES)
+        elif self.layout == HORIZONTAL :
+            widget.pack(fill=BOTH, expand=expand, side=LEFT)
+        elif self.layout == self.GRID :
+            if row == None:
+                raise RuntimeError("row can not be None")
+            if column == None :
+                raise RuntimeError("column can not be None")
+            widget.grid(row=row, column=column)
+
+
 class Label(Label):
     """
     标签
@@ -448,6 +473,19 @@ class Menu(Menu):
 
     def addMenu(self, text, menu):
         self.add_cascade(label=text, menu=menu)
+
+
+class kdSignal:
+    
+    def __init__(self):
+        self.listerner = []
+
+    def emit(self, string):
+        for l in self.listerner:
+            l(string)
+
+    def connect(self, function):
+        self.listerner.append(function)
 
 
 def addContextMenu(widget, menu):
