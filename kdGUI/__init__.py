@@ -479,10 +479,11 @@ class kdSignal:
     
     def __init__(self):
         self.listerner = []
+#         self.args_length = len(args)
 
-    def emit(self, string):
+    def emit(self, *args, **kwargs):
         for l in self.listerner:
-            l(string)
+            l(*args, **kwargs)
 
     def connect(self, function):
         self.listerner.append(function)
