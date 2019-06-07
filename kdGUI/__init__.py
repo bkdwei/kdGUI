@@ -19,41 +19,43 @@ class Window(ThemedTk):
     GRID = "grid"
 
     def __init__(self, title=None):
-        if title :
+        if title:
             super().__init__(className=title, theme="aquativo")
         else:
             super().__init__()
         self.layout = VERTICAL
-        self.rowIndex = 0 
+        self.rowIndex = 0
         self.columnIndex = 0
-            
+
         global _default_root
         _default_root = self
         self.statusbar = Label("状态栏", self)
         self.statusbar.setAnchor("w")
 #         self.addWidget(self.statusbar, expand=YES)
-        self.statusbar.pack(fill=BOTH, expand=YES, side=BOTTOM,)
-        
+        self.statusbar.pack(
+            fill=BOTH, expand=YES, side=BOTTOM,)
+
     def run(self):
         self.mainloop()
 
     def setLayout(self, layout):
-        self.layout = layout    
+        self.layout = layout
 
     def addWidget(self, widget, row=None, column=None, expand=NO):
         if self.layout == VERTICAL:
-            print(self.rowIndex, self.columnIndex, widget.widgetName)
+            print(self.rowIndex, self.columnIndex,
+                  widget.widgetName)
 #             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
 #             self.rowIndex += 1
             widget.pack(fill=BOTH, expand=YES)
-        elif self.layout == HORIZONTAL :
-#             widget.grid(row=self.rowIndex, column=self.columnIndex)
-#             self.columnIndex += 1
+        elif self.layout == HORIZONTAL:
+            #             widget.grid(row=self.rowIndex, column=self.columnIndex)
+            #             self.columnIndex += 1
             widget.pack(fill=BOTH, expand=expand, side=LEFT)
-        elif self.layout == self.GRID :
+        elif self.layout == self.GRID:
             if row == None:
                 raise RuntimeError("row can not be None")
-            if column == None :
+            if column == None:
                 raise RuntimeError("column can not be None")
             widget.grid(row=row, column=column)
 
@@ -83,10 +85,11 @@ class Window(ThemedTk):
 class VerticalLayout(LabelFrame):
 
     def __init__(self, text=None, parent=None):
-        if not parent :
+        if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
+        super().__init__(text=text, bd=1, master=parent,
+                         padx=2, pady=2, relief='sunken')
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
 #         self.rowconfigure(0, weight=1)
@@ -96,12 +99,18 @@ class VerticalLayout(LabelFrame):
 #         self["bd"] = 5
 #         self["height"] = 300
 #         self["width"] = 300
-    
+
+    def text(self):
+        return self["text"]
+
+    def setText(self, text):
+        self["text"] = text
+
     def setRowIndex(self, index):
         self.rowIndex = index
-        
+
     def addWidget(self, widget):
-#         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
+        #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
         self.rowIndex += 1
         widget.pack(fill=BOTH, expand=YES)
 
@@ -109,13 +118,14 @@ class VerticalLayout(LabelFrame):
         return self.winfo_children()
 
 
-class HorizotalLayout(LabelFrame):
+class HorizontalLayout(LabelFrame):
 
     def __init__(self, text=None, parent=None):
-        if not parent :
+        if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
+        super().__init__(text=text, bd=1, master=parent,
+                         padx=2, pady=2, relief='sunken')
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
 #         self.rowconfigure(0, weight=1)
@@ -125,12 +135,18 @@ class HorizotalLayout(LabelFrame):
 #         self["bd"] = 5
 #         self["height"] = 300
 #         self["width"] = 300
-    
+
+    def text(self):
+        return self["text"]
+
+    def setText(self, text):
+        self["text"] = text
+
     def setHeight(self, height):
         self["height"] = height
-        
+
     def addWidget(self, widget):
-#         widget.grid(row=0, column=self.columnIndex, sticky='nsew')
+        #         widget.grid(row=0, column=self.columnIndex, sticky='nsew')
         self.columnIndex += 1
         widget.pack(fill=BOTH, expand=YES, side=LEFT)
 
@@ -141,25 +157,34 @@ class HorizotalLayout(LabelFrame):
 class GridLayout(LabelFrame):
 
     def __init__(self, text=None, parent=None):
-        if not parent :
+        if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')  
+        super().__init__(text=text, bd=1, master=parent,
+                         padx=2, pady=2, relief='sunken')
         self.rowIndex = 0
         self.columnIndex = 0
-            
+
+    def text(self):
+        return self["text"]
+
+    def setText(self, text):
+        self["text"] = text
+
     def setRowIndex(self, index):
         self.rowIndex = index
-        
+
     def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
         self.columnconfigure(column, weight=1)
-        self.rowconfigure(row, weight=1)  
-        widget.grid(row=row, column=column , rowspan=rowspan, columnspan=columnspan, sticky=N + S + W + E)
+        self.rowconfigure(row, weight=1)
+        widget.grid(row=row, column=column, rowspan=rowspan,
+                    columnspan=columnspan, sticky=N + S + W + E)
 
     def addWidgetOnRow(self, widget):
         self.columnconfigure(self.columnIndex, weight=1)
         self.rowconfigure(self.rowIndex, weight=1)
-        widget.grid(row=self.rowIndex, column=self.columnIndex , rowspan=1, columnspan=1, sticky=N + S + W + E)
+        widget.grid(row=self.rowIndex, column=self.columnIndex,
+                    rowspan=1, columnspan=1, sticky=N + S + W + E)
         self.rowIndex = self.rowIndex + 1
         print("self.rowIndex", self.rowIndex)
 
@@ -173,24 +198,25 @@ class GridLayout(LabelFrame):
 class Container(LabelFrame):
 
     def __init__(self, text=None, parent=None):
-        if not parent :
+        if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent, padx=2, pady=2, relief='sunken')
+        super().__init__(text=text, bd=1, master=parent,
+                         padx=2, pady=2, relief='sunken')
         self.layout = VERTICAL
-    
+
     def setLayout(self, layout):
-        self.layout = layout            
+        self.layout = layout
 
     def addWidget(self, widget, row=None, column=None, expand=NO):
         if self.layout == VERTICAL:
             widget.pack(fill=BOTH, expand=YES)
-        elif self.layout == HORIZONTAL :
+        elif self.layout == HORIZONTAL:
             widget.pack(fill=BOTH, expand=expand, side=LEFT)
-        elif self.layout == self.GRID :
+        elif self.layout == self.GRID:
             if row == None:
                 raise RuntimeError("row can not be None")
-            if column == None :
+            if column == None:
                 raise RuntimeError("column can not be None")
             widget.grid(row=row, column=column)
 
@@ -199,10 +225,10 @@ class Label(Label):
     """
     标签
     """
-    
+
     def __init__(self, text=None, parent=None):
         super().__init__(parent, text=text)
-        
+
     def text(self):
         return self["text"]
 
@@ -218,33 +244,36 @@ class Label(Label):
     def setEnable(self, boolean):
         if boolean:
             self["state"] = "active"
-        else :
+        else:
             self["state"] = "disabled"
-    
+
     def setAlignMent(self, alignMent):
         self["justify"] = alignMent
 
     def clear(self):
         self["text"] = ""
-    
+
     def setHeight(self, height):
-        self["height"] = height   
+        self["height"] = height
 
     def setBackgroundColor(self, color):
-        self["background"] = color     
+        self["background"] = color
 
     def setAnchor(self, anchor):
         self['anchor'] = anchor
 
+    def doubleClick(self, function):
+        self.bind("<Double-Button-1>", function)
 
-class Button(ttk.Button):
+
+class PushButton(ttk.Button):
     """
     按钮
     """
 
     def __init__(self, text=None, parent=None):
         super().__init__(parent, text=text)
-        self.cnf = {"text":text}
+        self.cnf = {"text": text}
 
     def click(self, function):
         self["command"] = function
@@ -267,10 +296,10 @@ class RadioButton(Radiobutton):
     def __init__(self, text=None, parent=None, RadioButtonGroup=None):
         super().__init__(parent, text=text)
         self["value"] = text
-        if RadioButtonGroup :
+        if RadioButtonGroup:
             self.group = RadioButtonGroup
             self.setGroup(RadioButtonGroup)
-            
+
         self.data = None
 
     def text(self):
@@ -293,14 +322,14 @@ class RadioButton(Radiobutton):
 
     def value(self):
         return self.data
-    
+
     def setValue(self, data):
         self.data = data
 
     def setChecked(self, boolean):
         if boolean:
             self.group.set(self["value"])
-        else :
+        else:
             self.group.set(None)
 
 
@@ -315,7 +344,7 @@ class CheckButton(ttk.Checkbutton):
     def __init__(self, text=None, parent=None):
         super().__init__(master=parent, text=text)
 
-        
+
 class LineEdit(ttk.Entry):
 
     def __init__(self, defaultValue=None, parent=None):
@@ -352,7 +381,7 @@ class LineEdit(ttk.Entry):
     def setReadOnly(self, boolean):
         if boolean:
             self["state"] = "disable"
-        else :
+        else:
             self["state"] = "normal"
 
 
@@ -424,12 +453,12 @@ class TreeWidget(ttk.Treeview):
         self.bind("<Double-1>", command)
 
     def setHeader(self, columnIndex, text, width):
-        self.heading("#" + columnIndex , text=text)
+        self.heading("#" + columnIndex, text=text)
         self.column("#" + columnIndex, width=width)
 
 
 class ComboBox(ttk.Combobox):
-        
+
     def __init__(self, parent=None):
         super().__init__(master=parent)
         self.values = StringVar()
@@ -442,7 +471,7 @@ class ComboBox(ttk.Combobox):
         self.values.apend(item)
 
     def count(self):
-        return  len(self.values)
+        return len(self.values)
 
     def clear(self):
         self.values.clear()
@@ -476,7 +505,7 @@ class Menu(Menu):
 
 
 class kdSignal:
-    
+
     def __init__(self):
         self.listerner = []
 #         self.args_length = len(args)
