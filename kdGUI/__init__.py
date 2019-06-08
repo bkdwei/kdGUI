@@ -72,7 +72,7 @@ class Window(ThemedTk):
     def showFullScreen(self):
         self.attributes("-fullscreen", True)
 
-    def children(self):
+    def childrens(self):
         return self.winfo_children()
 
     def showMessage(self, msg):
@@ -150,7 +150,7 @@ class HorizontalLayout(LabelFrame):
         self.columnIndex += 1
         widget.pack(fill=BOTH, expand=YES, side=LEFT)
 
-    def children(self):
+    def childrens(self):
         return self.winfo_children()
 
 
@@ -191,7 +191,7 @@ class GridLayout(LabelFrame):
     def setWidth(self, width):
         self["width"] = width
 
-    def children(self):
+    def childrens(self):
         return self.winfo_children()
 
 
@@ -452,23 +452,32 @@ class TreeWidget(ttk.Treeview):
     def doubleClick(self, command):
         self.bind("<Double-1>", command)
 
-    def setHeader(self, columnIndex, text, width):
-        self.heading("#" + columnIndex, text=text)
-        self.column("#" + columnIndex, width=width)
+    def setHeader(self,  text, width):
+        self.heading(text, text=text)
+#         self.column(text, width=width)
+
+    def insertItem(self, rowIndex, record):
+        self.insert("", rowIndex, values=record)
+
+    def setColumns(self, columns):
+        self["columns"] = columns
 
 
 class ComboBox(ttk.Combobox):
 
     def __init__(self, parent=None):
         super().__init__(master=parent)
-        self.values = StringVar()
-        self["textvariable"] = self.values
+        self.value = StringVar()
+        self["textvariable"] = self.value
+        self.values = []
+        self["value"] = self.values
 
     def addItems(self, items):
-        self.values.apend(items)
+        self.values.extend(items)
+        self["value"] = self.values
 
     def addItem(self, item):
-        self.values.apend(item)
+        self.values.append(item)
 
     def count(self):
         return len(self.values)
@@ -477,10 +486,15 @@ class ComboBox(ttk.Combobox):
         self.values.clear()
 
     def currentText(self):
-        return self.current()
+        return self.values[self.current()]
 
     def setCurrentIndex(self, index):
-        self.currentText(index)
+        self.current(newindex=index)
+
+    def setCurrentItem(self, item):
+        index = self.values.index(item)
+        if index:
+            self.setCurrentIndex(index)
 
     def clicked(self, command):
         self.bind("<<ComboboxSelected>>", command)
@@ -524,3 +538,84 @@ def addContextMenu(widget, menu):
         menu.post(event.x_root, event.y_root)
 
     widget.bind("<Button-3>", popup)
+
+
+class PropertyEditor(ttk.Frame):
+    def __init__(self,  parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(master=parent, relief='sunken')
+        self.rowIndex = -1
+        self.value_change_signal = kdSignal()
+
+    def addLabel(self, text, row: int=None):
+        widget = Label(text, self)
+        if not row:
+            self.rowIndex = self.rowIndex + 1
+            row = self.rowIndex
+        widget.grid(row=row, column=0)
+
+    def _on_text_change(self, event):
+        print("yes", event.widget.grid_info())
+        widget = event.widget
+        grid_info = widget.grid_info()
+        lb = widget.master.grid_slaves(
+            grid_info["row"], 0)
+        if lb:
+            if isinstance(widget, LineEdit):
+                self.value_change_signal.emit(
+                    lb[0].text(), widget.text())
+            elif isinstance(widget, ComboBox):
+                print("comboBox:", widget.currentText())
+                self.value_change_signal.emit(
+                    lb[0].text(), widget.currentText())
+
+    def addAttribute(self, type, curValue, content=None, row: int=None):
+        if type == "text":
+            widget = LineEdit(str(curValue), self)
+            widget.bind("<Return>", self._on_text_change)
+        elif type == "list":
+            widget = ComboBox(self)
+            widget.addItems(content)
+            widget.setCurrentItem(curValue)
+
+            widget.clicked(self._on_text_change)
+        if not row:
+            row = self.rowIndex
+
+        if widget:
+            widget.grid(row=self.rowIndex, column=1)
+
+    def addRow(self, text, type, curValue, content=None,  row: int=None):
+        self.addLabel(text, row)
+        self.addAttribute(type, curValue, content, row)
+
+    def setRowIndex(self, index):
+        self.rowIndex = index
+
+    def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
+        self.columnconfigure(column, weight=1)
+        self.rowconfigure(row, weight=1)
+        widget.grid(row=row, column=column, rowspan=rowspan,
+                    columnspan=columnspan, sticky=N + S + W + E)
+
+    def addWidgetOnRow(self, widget):
+        self.columnconfigure(self.columnIndex, weight=1)
+        self.rowconfigure(self.rowIndex, weight=1)
+        widget.grid(row=self.rowIndex, column=self.columnIndex,
+                    rowspan=1, columnspan=1, sticky=N + S + W + E)
+        self.rowIndex = self.rowIndex + 1
+        print("self.rowIndex", self.rowIndex)
+
+    def setWidth(self, width):
+        self["width"] = width
+
+    def childrens(self):
+        return self.winfo_children()
+
+    def clear(self):
+        self.rowIndex = -1
+        children = self.childrens()
+        for child in children:
+            child.destroy()
