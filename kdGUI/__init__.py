@@ -6,10 +6,9 @@ Created on 2019年5月25日
 from tkinter import *
 from tkinter import ttk
 from tkinter.constants import *
-from tkinter.scrolledtext import ScrolledText
-
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
+
 
 _default_root = None
 
@@ -219,6 +218,9 @@ class Container(LabelFrame):
             if column == None:
                 raise RuntimeError("column can not be None")
             widget.grid(row=row, column=column)
+
+    def childrens(self):
+        return self.winfo_children()
 
 
 class Label(Label):
@@ -509,7 +511,11 @@ class Menu(Menu):
         super().__init__(master=parent, tearoff=False)
 
     def addAction(self, text, function=None):
-        self.add_command(label=text, command=function)
+        if function:
+            self.add_command(
+                label=text, command=lambda: function(text))
+        else:
+            self.add_command(label=text)
 
     def addSeparator(self):
         self.add_separator()
@@ -572,7 +578,7 @@ class PropertyEditor(ttk.Frame):
                     lb[0].text(), widget.currentText())
 
     def addAttribute(self, type, curValue, content=None, row: int=None):
-        if type == "text":
+        if not type or type == "text":
             widget = LineEdit(str(curValue), self)
             widget.bind("<Return>", self._on_text_change)
         elif type == "list":
