@@ -76,10 +76,10 @@ class Application(tk.Frame):
         tk.Label(container, text="blablabla", font=("Arial Bold", 10),
             fg="red").pack(padx=10, pady=10)
  
-        tk.Button(container, text="Start", font=("Arial Bold", 20),
+        tk.PushButton(container, text="Start", font=("Arial Bold", 20),
             command=self.start).pack(padx=10, pady=30)
  
-        tk.Button(container, text="CLOSE", font=("Arial Bold", 20),
+        tk.PushButton(container, text="CLOSE", font=("Arial Bold", 20),
             command=self.finish).pack(padx=10, pady=30)
              
         container.pack_configure(fill='none', expand=True)

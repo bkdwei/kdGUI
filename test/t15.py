@@ -403,7 +403,7 @@ class Icon2:
 def test():
     root = tkinter.Tk()
     root.geometry("+1+1")
-    tkinter.Button(command=root.quit, text="Quit").pack()
+    tkinter.PushButton(command=root.quit, text="Quit").pack()
     t1 = Tester(root)
     t1.top.geometry("+1+60")
     t2 = Tester(root)

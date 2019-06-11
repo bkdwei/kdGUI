@@ -4,7 +4,7 @@ Created on 2019年5月26日
 @author: bkd
 '''
 from tkinter import *
-from kdGUI import Button, RadioButton, RadioButtonGroup
+from kdGUI import PushButton, RadioButton, RadioButtonGroup
 
 
 def aa():
@@ -16,7 +16,7 @@ def ab():
 
 
 root = Tk()
-b = Button("bkd", root)
+b = PushButton("bkd", root)
 b.click(aa)
 b.pack()
 

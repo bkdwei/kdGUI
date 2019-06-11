@@ -34,11 +34,11 @@ gl = GridLayout("导入和查询", win)
 win.addWidget(gl)
 
 # 第一行
-pb_open = Button("打开日志文件", gl)
+pb_open = PushButton("打开日志文件", gl)
 pb_open.click(aa)
 lb_encoding = Label("编码格式", gl)
 le_encoding = LineEdit("GB2312", gl)
-pb_query = Button("查询", gl)
+pb_query = PushButton("查询", gl)
 gl.addWidget(pb_open, 0, 0)
 gl.addWidget(lb_encoding, 0, 3)
 gl.addWidget(le_encoding, 0, 4)

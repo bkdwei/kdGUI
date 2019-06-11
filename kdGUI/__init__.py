@@ -510,10 +510,14 @@ class Menu(Menu):
     def __init__(self, tearoff=None, parent=None):
         super().__init__(master=parent, tearoff=False)
 
-    def addAction(self, text, function=None):
+    def addAction(self, text, function=None, returnCurText=False):
         if function:
-            self.add_command(
-                label=text, command=lambda: function(text))
+            if returnCurText:
+                self.add_command(
+                    label=text, command=lambda: function(text))
+            else:
+                self.add_command(
+                    label=text, command=function)
         else:
             self.add_command(label=text)
 
