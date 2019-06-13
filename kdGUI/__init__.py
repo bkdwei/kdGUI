@@ -9,7 +9,6 @@ from tkinter.constants import *
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
 
-
 _default_root = None
 
 
@@ -79,6 +78,9 @@ class Window(ThemedTk):
 
     def addMenu(self, menuBar):
         self.config(menu=menuBar)
+    
+    def setGeometry(self, width, height):
+        self.geometry("%dx%d" % (width, height))
 
 
 class VerticalLayout(LabelFrame):
@@ -341,10 +343,29 @@ class RadioButtonGroup(StringVar):
         super().__init__()
 
 
-class CheckButton(ttk.Checkbutton):
+class CheckButton(Checkbutton):
 
     def __init__(self, text=None, parent=None):
-        super().__init__(master=parent, text=text)
+        self.checkState = BooleanVar()
+        super().__init__(master=parent, text=text, variable=self.checkState)
+        self.items = {}
+
+    def setChecked(self, boolean):
+        if boolean:
+            self.select()
+            self.checkState.set(True)
+        else:
+            self.deselect()
+            self.checkState.set(False)
+
+    def setData(self, item, index=0):
+        self.items[index] = item
+
+    def data(self, index=0):
+        return self.items[index]
+
+    def isChecked(self):
+        return self.checkState.get()
 
 
 class LineEdit(ttk.Entry):
@@ -422,7 +443,12 @@ class ListWidget(Listbox):
     def setCurrentRow(self, index):
         self.activate(index)
 
+    def currentItem(self):
+        curselection = self.curselection()
+        if len(curselection) == 1:
+            return self.item(curselection[0])
 
+    
 class TreeWidget(ttk.Treeview):
 
     def __init__(self, parent=None):
@@ -454,7 +480,7 @@ class TreeWidget(ttk.Treeview):
     def doubleClick(self, command):
         self.bind("<Double-1>", command)
 
-    def setHeader(self,  text, width):
+    def setHeader(self, text, width):
         self.heading(text, text=text)
 #         self.column(text, width=width)
 
@@ -551,7 +577,8 @@ def addContextMenu(widget, menu):
 
 
 class PropertyEditor(ttk.Frame):
-    def __init__(self,  parent=None):
+
+    def __init__(self, parent=None):
         if not parent:
             global _default_root
             parent = _default_root
@@ -597,7 +624,7 @@ class PropertyEditor(ttk.Frame):
         if widget:
             widget.grid(row=self.rowIndex, column=1)
 
-    def addRow(self, text, type, curValue, content=None,  row: int=None):
+    def addRow(self, text, type, curValue, content=None, row: int=None):
         self.addLabel(text, row)
         self.addAttribute(type, curValue, content, row)
 
