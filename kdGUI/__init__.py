@@ -78,7 +78,7 @@ class Window(ThemedTk):
 
     def addMenu(self, menuBar):
         self.config(menu=menuBar)
-    
+
     def setGeometry(self, width, height):
         self.geometry("%dx%d" % (width, height))
 
@@ -347,7 +347,8 @@ class CheckButton(Checkbutton):
 
     def __init__(self, text=None, parent=None):
         self.checkState = BooleanVar()
-        super().__init__(master=parent, text=text, variable=self.checkState)
+        super().__init__(master=parent,
+                         text=text, variable=self.checkState)
         self.items = {}
 
     def setChecked(self, boolean):
@@ -448,7 +449,7 @@ class ListWidget(Listbox):
         if len(curselection) == 1:
             return self.item(curselection[0])
 
-    
+
 class TreeWidget(ttk.Treeview):
 
     def __init__(self, parent=None):
@@ -552,6 +553,9 @@ class Menu(Menu):
 
     def addMenu(self, text, menu):
         self.add_cascade(label=text, menu=menu)
+
+    def removeAction(self, text):
+        self.delete(text)
 
 
 class kdSignal:
