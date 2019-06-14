@@ -18,27 +18,27 @@ setup(
     long_description=long_description,
 #     long_description_content_type="text/markdown",
     url="https://github.com/bkdwei/kdGUI",
-    license="GPLv3+",
+    license="MIT",
     platforms=["any"],
     
 #     需要安装的依赖
-    install_requires=[],
+    install_requires=["ttkthemes"],
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
 
 #     可变部分
     description="",
-    keywords=("tkinter", "ui"),
+    keywords=("tkinter", "gui"),
 #   see  https://pypi.org/classifiers/
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        " Development Status :: 2 - Pre-Alpha",
         "Environment :: X11 Applications :: Qt",
-        "Intended Audience :: End Users/Desktop",
+        "Intended Audience :: Developers",
         "Natural Language :: Chinese (Simplified)",
-        "Topic :: Software Development :: Code Generators",
+        "Topic :: Software Development :: User Interfaces",
         "Programming Language :: Python :: 3",
-        " License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+        " License :: OSI Approved :: MIT License",
         "Operating System :: POSIX",
         "Operating System :: Microsoft :: Windows",
     ]
