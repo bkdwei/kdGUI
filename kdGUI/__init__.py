@@ -426,10 +426,10 @@ class CheckButton(ttk.Checkbutton):
 
     def setChecked(self, boolean):
         if boolean:
-            self.select()
+#             self.select()
             self.checkState.set(True)
         else:
-            self.deselect()
+#             self.deselect()
             self.checkState.set(False)
 
     def setData(self, item, index=0):
