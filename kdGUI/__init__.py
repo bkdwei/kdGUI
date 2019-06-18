@@ -62,7 +62,7 @@ class Window(tk.Tk):
         self.title(title)
 
     def showMaximized(self):
-#         w, h = self.maxsize()
+        #         w, h = self.maxsize()
         w = self.winfo_screenwidth()
         h = self.winfo_screenheight()
         self.geometry("{}x{}".format(w, h))
@@ -135,7 +135,7 @@ class ThemedWindow(ThemedTk):
         ThemedWidget.set_theme(self, theme_name)
 
     def showMaximized(self):
-#         w, h = self.maxsize()
+        #         w, h = self.maxsize()
         w = self.winfo_screenwidth()
         h = self.winfo_screenheight()
         self.geometry("{}x{}".format(w, h))
@@ -278,6 +278,7 @@ class Container(ttk.LabelFrame):
         super().__init__(text=text, master=parent,
                          relief='sunken')
         self.layout = VERTICAL
+        self.empty_flag = True
 
     def setLayout(self, layout):
         self.layout = layout
@@ -287,15 +288,18 @@ class Container(ttk.LabelFrame):
             widget.pack(fill=BOTH, expand=YES)
         elif self.layout == HORIZONTAL:
             widget.pack(fill=BOTH, expand=expand, side=LEFT)
-        elif self.layout == self.GRID:
-            if row == None:
-                raise RuntimeError("row can not be None")
-            if column == None:
-                raise RuntimeError("column can not be None")
-            widget.grid(row=row, column=column)
+        elif self.layout == "grid":
+            if row == None and column == None and self.empty_flag:
+                widget.grid(row=0, column=0)
+                self.empty_flag = False
+            elif row != None and column != None:
+                widget.grid(row=row, column=column)
 
     def childrens(self):
         return self.winfo_children()
+
+    def getLayout(self):
+        return self.layout
 
 
 class Label(ttk.Label):
@@ -426,10 +430,10 @@ class CheckButton(ttk.Checkbutton):
 
     def setChecked(self, boolean):
         if boolean:
-#             self.select()
+            #             self.select()
             self.checkState.set(True)
         else:
-#             self.deselect()
+            #             self.deselect()
             self.checkState.set(False)
 
     def setData(self, item, index=0):
@@ -480,7 +484,7 @@ class LineEdit(ttk.Entry):
             self["state"] = "disable"
         else:
             self["state"] = "normal"
-    
+
     def setHideInput(self, char):
         self["show"] = char
 
@@ -766,6 +770,6 @@ class Text(tk.Text):
     def addVerticalScrollbar(self):
         scroll = tk.Scrollbar(self.master)
         scroll.pack(side=RIGHT, fill=Y)
-        self.pack(side=LEFT, fill=Y) 
+        self.pack(side=LEFT, fill=Y)
         scroll.config(command=self.yview)
         self.config(yscrollcommand=scroll.set)

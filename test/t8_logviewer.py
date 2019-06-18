@@ -3,11 +3,10 @@ Created on 2019年5月26日
 
 @author: bkd
 '''
+from kdGUI import *
 import time
 from tkinter import VERTICAL
 from ttkthemes import THEMES
-
-from kdGUI import *
 
 
 def aa():
@@ -17,7 +16,7 @@ def aa():
 #         win.setTheme(theme)
 #         print("theme:" + theme)
 #         time.sleep(5)
-    global  theme_index
+    global theme_index
     global tb_result
     win.setTheme(THEMES[theme_index])
     print(THEMES[theme_index])
@@ -26,7 +25,7 @@ def aa():
 
 
 theme_index = 0
-win = Window("Java日志查看器")
+win = ThemedWindow("Java日志查看器")
 # win.setLayout(HORIZONTAL)
 win.setTheme(THEMES[0])
 
@@ -66,10 +65,10 @@ gl.addWidget(le_thread_id, 2, 4, 1, 2)
 
 # 第四行
 lb_level = Label("日志级别", gl)
-cb_debug = CheckBox("debug", gl)
-cb_info = CheckBox("info", gl)
-cb_warn = CheckBox("warn", gl)
-cb_error = CheckBox("error", gl)
+cb_debug = CheckButton("debug", gl)
+cb_info = CheckButton("info", gl)
+cb_warn = CheckButton("warn", gl)
+cb_error = CheckButton("error", gl)
 gl.addWidget(lb_level, 3, 0)
 gl.addWidget(cb_debug, 3, 1)
 gl.addWidget(cb_info, 3, 2)
@@ -90,12 +89,9 @@ vl = VerticalLayout("结果", win)
 win.addWidget(vl)
 
 tb_result = Label("ss", vl)
-tb_result.setHeight(10)
 tb_result.setBackgroundColor("white")
 statusbar = Label("状态栏", vl)
-statusbar.setHeight(2)
 vl.addWidget(tb_result)
 vl.addWidget(statusbar)
-   
-win.run()
 
+win.run()
