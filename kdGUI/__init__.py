@@ -3,11 +3,13 @@ Created on 2019年5月25日
 
 @author: bkd
 '''
-from tkinter import *
 from tkinter import ttk
 from tkinter.constants import *
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
+
+import tkinter as tk
+
 
 _default_root = None
 
@@ -31,7 +33,7 @@ class Window(ThemedTk):
         self.statusbar.setAnchor("w")
 #         self.addWidget(self.statusbar, expand=YES)
         self.statusbar.pack(
-            fill=BOTH, expand=YES, side=BOTTOM,)
+            fill=BOTH, expand=NO, side=BOTTOM,)
 
     def run(self):
         self.mainloop()
@@ -45,7 +47,7 @@ class Window(ThemedTk):
                   widget.widgetName)
 #             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
 #             self.rowIndex += 1
-            widget.pack(fill=BOTH, expand=YES)
+            widget.pack(fill=BOTH, expand=expand)
         elif self.layout == HORIZONTAL:
             #             widget.grid(row=self.rowIndex, column=self.columnIndex)
             #             self.columnIndex += 1
@@ -83,14 +85,14 @@ class Window(ThemedTk):
         self.geometry("%dx%d" % (width, height))
 
 
-class VerticalLayout(LabelFrame):
+class VerticalLayout(ttk.LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent,
-                         padx=2, pady=2, relief='sunken')
+        super().__init__(text=text,  master=parent,
+                         relief='sunken')
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
 #         self.rowconfigure(0, weight=1)
@@ -119,14 +121,14 @@ class VerticalLayout(LabelFrame):
         return self.winfo_children()
 
 
-class HorizontalLayout(LabelFrame):
+class HorizontalLayout(ttk.LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent,
-                         padx=2, pady=2, relief='sunken')
+        super().__init__(text=text,  master=parent,
+                         relief='sunken')
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
 #         self.rowconfigure(0, weight=1)
@@ -155,14 +157,14 @@ class HorizontalLayout(LabelFrame):
         return self.winfo_children()
 
 
-class GridLayout(LabelFrame):
+class GridLayout(ttk.LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent,
-                         padx=2, pady=2, relief='sunken')
+        super().__init__(text=text,  master=parent,
+                         relief='sunken')
         self.rowIndex = 0
         self.columnIndex = 0
 
@@ -177,7 +179,7 @@ class GridLayout(LabelFrame):
 
     def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
         self.columnconfigure(column, weight=1)
-        self.rowconfigure(row, weight=1)
+        #         self.rowconfigure(row, weight=1)
         widget.grid(row=row, column=column, rowspan=rowspan,
                     columnspan=columnspan, sticky=N + S + W + E)
 
@@ -196,14 +198,14 @@ class GridLayout(LabelFrame):
         return self.winfo_children()
 
 
-class Container(LabelFrame):
+class Container(ttk.LabelFrame):
 
     def __init__(self, text=None, parent=None):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, bd=1, master=parent,
-                         padx=2, pady=2, relief='sunken')
+        super().__init__(text=text,  master=parent,
+                         relief='sunken')
         self.layout = VERTICAL
 
     def setLayout(self, layout):
@@ -225,7 +227,7 @@ class Container(LabelFrame):
         return self.winfo_children()
 
 
-class Label(Label):
+class Label(ttk.Label):
     """
     标签
     """
@@ -292,7 +294,7 @@ class PushButton(ttk.Button):
         self.bind("<Double-Button-1>", function)
 
 
-class RadioButton(Radiobutton):
+class RadioButton(ttk.Radiobutton):
     """
     单选按钮
     """
@@ -337,16 +339,16 @@ class RadioButton(Radiobutton):
             self.group.set(None)
 
 
-class RadioButtonGroup(StringVar):
+class RadioButtonGroup(tk.StringVar):
 
     def __init__(self):
         super().__init__()
 
 
-class CheckButton(Checkbutton):
+class CheckButton(ttk.Checkbutton):
 
     def __init__(self, text=None, parent=None):
-        self.checkState = BooleanVar()
+        self.checkState = tk.BooleanVar()
         super().__init__(master=parent,
                          text=text, variable=self.checkState)
         self.items = {}
@@ -373,7 +375,7 @@ class LineEdit(ttk.Entry):
 
     def __init__(self, defaultValue=None, parent=None):
         super().__init__(master=parent)
-        self.contents = StringVar()
+        self.contents = tk.StringVar()
         self["textvariable"] = self.contents
         if defaultValue:
             self.contents.set(defaultValue)
@@ -409,7 +411,7 @@ class LineEdit(ttk.Entry):
             self["state"] = "normal"
 
 
-class ListWidget(Listbox):
+class ListWidget(tk.Listbox):
 
     def __init__(self, parent=None):
         super().__init__(master=parent)
@@ -496,7 +498,7 @@ class ComboBox(ttk.Combobox):
 
     def __init__(self, parent=None):
         super().__init__(master=parent)
-        self.value = StringVar()
+        self.value = tk.StringVar()
         self["textvariable"] = self.value
         self.values = []
         self["value"] = self.values
@@ -507,6 +509,7 @@ class ComboBox(ttk.Combobox):
 
     def addItem(self, item):
         self.values.append(item)
+        self["value"] = self.values
 
     def count(self):
         return len(self.values)
@@ -532,7 +535,7 @@ class ComboBox(ttk.Combobox):
         self["value"] = values
 
 
-class Menu(Menu):
+class Menu(tk.Menu):
 
     def __init__(self, tearoff=None, parent=None):
         super().__init__(master=parent, tearoff=False)
@@ -660,3 +663,27 @@ class PropertyEditor(ttk.Frame):
         children = self.childrens()
         for child in children:
             child.destroy()
+
+
+class Text(tk.Text):
+    def __init__(self, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(master=parent)
+
+    def append(self,  text):
+        self.insert(END, text)
+
+    def clear(self):
+        self.delete(1.0, "end")
+
+    def setWidth(self, width):
+        self["width"] = width
+
+    def setHeight(self, height):
+        self["height"] = height
+
+    def setText(self, text):
+        self.clear()
+        self.append(text)
