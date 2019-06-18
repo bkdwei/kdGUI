@@ -191,6 +191,9 @@ class VerticalLayout(ttk.LabelFrame):
     def childrens(self):
         return self.winfo_children()
 
+    def getLayout(self):
+        return VERTICAL
+
 
 class HorizontalLayout(ttk.LabelFrame):
 
@@ -227,6 +230,9 @@ class HorizontalLayout(ttk.LabelFrame):
     def childrens(self):
         return self.winfo_children()
 
+    def getLayout(self):
+        return HORIZONTAL
+
 
 class GridLayout(ttk.LabelFrame):
 
@@ -236,8 +242,7 @@ class GridLayout(ttk.LabelFrame):
             parent = _default_root
         super().__init__(text=text, master=parent,
                          relief='sunken')
-        self.rowIndex = 0
-        self.columnIndex = 0
+        self.empty_flag = True
 
     def text(self):
         return self["text"]
@@ -245,28 +250,25 @@ class GridLayout(ttk.LabelFrame):
     def setText(self, text):
         self["text"] = text
 
-    def setRowIndex(self, index):
-        self.rowIndex = index
-
     def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
-        self.columnconfigure(column, weight=1)
+        #         self.columnconfigure(column, weight=1)
         #         self.rowconfigure(row, weight=1)
-        widget.grid(row=row, column=column, rowspan=rowspan,
-                    columnspan=columnspan, sticky=N + S + W + E)
-
-    def addWidgetOnRow(self, widget):
-        self.columnconfigure(self.columnIndex, weight=1)
-        self.rowconfigure(self.rowIndex, weight=1)
-        widget.grid(row=self.rowIndex, column=self.columnIndex,
-                    rowspan=1, columnspan=1, sticky=N + S + W + E)
-        self.rowIndex = self.rowIndex + 1
-        print("self.rowIndex", self.rowIndex)
+        if row == None and column == None and self.empty_flag:
+            widget.grid(row=0, column=0, rowspan=rowspan,
+                        columnspan=columnspan, sticky=N + S + W + E)
+            self.empty_flag = False
+        elif row != None and column != None:
+            widget.grid(row=row, column=column, rowspan=rowspan,
+                        columnspan=columnspan, sticky=N + S + W + E)
 
     def setWidth(self, width):
         self["width"] = width
 
     def childrens(self):
         return self.winfo_children()
+
+    def getLayout(self):
+        return "grid"
 
 
 class Container(ttk.LabelFrame):
