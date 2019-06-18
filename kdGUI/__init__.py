@@ -480,6 +480,9 @@ class LineEdit(ttk.Entry):
             self["state"] = "disable"
         else:
             self["state"] = "normal"
+    
+    def setHideInput(self, char):
+        self["show"] = char
 
 
 class ListWidget(tk.Listbox):
