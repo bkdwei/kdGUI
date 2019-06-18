@@ -29,7 +29,7 @@ setup(
 
 #     可变部分
     description="",
-    keywords=("tkinter", "gui"),
+    keywords=["tkinter", "gui"],
 #   see  https://pypi.org/classifiers/
     classifiers=[
         " Development Status :: 2 - Pre-Alpha",

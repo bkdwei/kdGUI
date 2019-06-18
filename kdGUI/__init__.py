@@ -10,11 +10,80 @@ from ttkthemes._widget import ThemedWidget
 
 import tkinter as tk
 
-
 _default_root = None
 
 
-class Window(ThemedTk):
+class Window(tk.Tk):
+
+    GRID = "grid"
+
+    def __init__(self, title=None):
+        if title:
+            super().__init__(className=title)
+        else:
+            super().__init__()
+        self.layout = VERTICAL
+        self.rowIndex = 0
+        self.columnIndex = 0
+
+        global _default_root
+        _default_root = self
+        self.statusbar = Label("状态栏", self)
+        self.statusbar.setAnchor("w")
+#         self.addWidget(self.statusbar, expand=YES)
+        self.statusbar.pack(
+            fill=BOTH, expand=NO, side=BOTTOM)
+
+    def run(self):
+        self.mainloop()
+
+    def setLayout(self, layout):
+        self.layout = layout
+
+    def addWidget(self, widget, row=None, column=None, expand=NO):
+        if self.layout == VERTICAL:
+            print(self.rowIndex, self.columnIndex,
+                  widget.widgetName)
+#             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
+#             self.rowIndex += 1
+            widget.pack(fill=BOTH, expand=expand)
+        elif self.layout == HORIZONTAL:
+            #             widget.grid(row=self.rowIndex, column=self.columnIndex)
+            #             self.columnIndex += 1
+            widget.pack(fill=BOTH, expand=expand, side=LEFT)
+        elif self.layout == self.GRID:
+            if row == None:
+                raise RuntimeError("row can not be None")
+            if column == None:
+                raise RuntimeError("column can not be None")
+            widget.grid(row=row, column=column)
+
+    def setTitle(self, title):
+        self.title(title)
+
+    def showMaximized(self):
+#         w, h = self.maxsize()
+        w = self.winfo_screenwidth()
+        h = self.winfo_screenheight()
+        self.geometry("{}x{}".format(w, h))
+
+    def showFullScreen(self):
+        self.attributes("-fullscreen", True)
+
+    def childrens(self):
+        return self.winfo_children()
+
+    def showMessage(self, msg):
+        self.statusbar.setText(msg)
+
+    def addMenu(self, menuBar):
+        self.config(menu=menuBar)
+
+    def setGeometry(self, width, height):
+        self.geometry("%dx%d" % (width, height))
+
+
+class ThemedWindow(ThemedTk):
 
     GRID = "grid"
 
@@ -33,7 +102,7 @@ class Window(ThemedTk):
         self.statusbar.setAnchor("w")
 #         self.addWidget(self.statusbar, expand=YES)
         self.statusbar.pack(
-            fill=BOTH, expand=NO, side=BOTTOM,)
+            fill=BOTH, expand=NO, side=BOTTOM)
 
     def run(self):
         self.mainloop()
@@ -66,7 +135,9 @@ class Window(ThemedTk):
         ThemedWidget.set_theme(self, theme_name)
 
     def showMaximized(self):
-        w, h = self.maxsize()
+#         w, h = self.maxsize()
+        w = self.winfo_screenwidth()
+        h = self.winfo_screenheight()
         self.geometry("{}x{}".format(w, h))
 
     def showFullScreen(self):
@@ -91,7 +162,7 @@ class VerticalLayout(ttk.LabelFrame):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text,  master=parent,
+        super().__init__(text=text, master=parent,
                          relief='sunken')
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
@@ -127,7 +198,7 @@ class HorizontalLayout(ttk.LabelFrame):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text,  master=parent,
+        super().__init__(text=text, master=parent,
                          relief='sunken')
 #         self.grid(column=0, row=0, sticky=(N, W, E, S))
 #         self.columnconfigure(0, weight=1)
@@ -163,7 +234,7 @@ class GridLayout(ttk.LabelFrame):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text,  master=parent,
+        super().__init__(text=text, master=parent,
                          relief='sunken')
         self.rowIndex = 0
         self.columnIndex = 0
@@ -204,7 +275,7 @@ class Container(ttk.LabelFrame):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text,  master=parent,
+        super().__init__(text=text, master=parent,
                          relief='sunken')
         self.layout = VERTICAL
 
@@ -666,13 +737,14 @@ class PropertyEditor(ttk.Frame):
 
 
 class Text(tk.Text):
+
     def __init__(self, parent=None):
         if not parent:
             global _default_root
             parent = _default_root
         super().__init__(master=parent)
 
-    def append(self,  text):
+    def append(self, text):
         self.insert(END, text)
 
     def clear(self):
@@ -687,3 +759,10 @@ class Text(tk.Text):
     def setText(self, text):
         self.clear()
         self.append(text)
+
+    def addVerticalScrollbar(self):
+        scroll = tk.Scrollbar(self.master)
+        scroll.pack(side=RIGHT, fill=Y)
+        self.pack(side=LEFT, fill=Y) 
+        scroll.config(command=self.yview)
+        self.config(yscrollcommand=scroll.set)
