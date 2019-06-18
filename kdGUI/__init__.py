@@ -509,6 +509,7 @@ class ComboBox(ttk.Combobox):
 
     def addItem(self, item):
         self.values.append(item)
+        self["value"] = self.values
 
     def count(self):
         return len(self.values)
