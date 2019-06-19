@@ -3,8 +3,10 @@ Created on 2019年5月25日
 
 @author: bkd
 '''
+from tkinter import tix
 from tkinter import ttk
 from tkinter.constants import *
+
 from ttkthemes import ThemedTk
 from ttkthemes._widget import ThemedWidget
 
@@ -13,7 +15,7 @@ import tkinter as tk
 _default_root = None
 
 
-class Window(tk.Tk):
+class Window(tix.Tk):
 
     GRID = "grid"
 
@@ -31,8 +33,8 @@ class Window(tk.Tk):
         self.statusbar = Label("状态栏", self)
         self.statusbar.setAnchor("w")
 #         self.addWidget(self.statusbar, expand=YES)
-        self.statusbar.pack(
-            fill=BOTH, expand=NO, side=BOTTOM)
+#         self.statusbar.pack(
+#             fill=BOTH, expand=NO, side=BOTTOM)
 
     def run(self):
         self.mainloop()
@@ -42,8 +44,8 @@ class Window(tk.Tk):
 
     def addWidget(self, widget, row=None, column=None, expand=NO):
         if self.layout == VERTICAL:
-            print(self.rowIndex, self.columnIndex,
-                  widget.widgetName)
+#             print(self.rowIndex, self.columnIndex,
+#                   widget.widgetName)
 #             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
 #             self.rowIndex += 1
             widget.pack(fill=BOTH, expand=expand)
@@ -110,6 +112,9 @@ class ThemedWindow(ThemedTk):
     def setLayout(self, layout):
         self.layout = layout
 
+    def getLayout(self):
+        return self.layout
+
     def addWidget(self, widget, row=None, column=None, expand=NO):
         if self.layout == VERTICAL:
             print(self.rowIndex, self.columnIndex,
@@ -164,15 +169,7 @@ class VerticalLayout(ttk.LabelFrame):
             parent = _default_root
         super().__init__(text=text, master=parent,
                          relief='sunken')
-#         self.grid(column=0, row=0, sticky=(N, W, E, S))
-#         self.columnconfigure(0, weight=1)
-#         self.rowconfigure(0, weight=1)
-#         self.cnf = {"text":text, "bd":10, "height":300, "width":300}
         self.rowIndex = 0
-#         self["bg"] = "blue"
-#         self["bd"] = 5
-#         self["height"] = 300
-#         self["width"] = 300
 
     def text(self):
         return self["text"]
@@ -185,7 +182,6 @@ class VerticalLayout(ttk.LabelFrame):
 
     def addWidget(self, widget):
         #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
-        self.rowIndex += 1
         widget.pack(fill=BOTH, expand=YES)
 
     def childrens(self):
@@ -775,3 +771,89 @@ class Text(tk.Text):
         self.pack(side=LEFT, fill=Y)
         scroll.config(command=self.yview)
         self.config(yscrollcommand=scroll.set)
+
+
+class Spinbox(tk.Spinbox):
+
+    def __init__(self, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(master=parent, increment=1 , from_=-9999, to=9999)
+        self.value = tk.IntVar()
+        self.setTextvariable(self.value)
+        self.setSingleStep(1)
+
+    def maximum(self):
+        return self["to"]
+
+    def minimum(self):
+        return self["from"]
+
+    def setMaximum(self, maximum):
+        self["to"] = maximum
+
+    def setMinimum(self, minimum):
+        self["from"] = minimum
+
+    def setRange(self, minimum, maximum):
+        self["from"] = minimum
+        self["to"] = maximum
+
+    def setSingleStep(self, step):
+        self["increment"] = step
+
+    def setValues(self, values:tuple):
+        self["values"] = values
+
+    def setValue(self, value:int):
+        self.value.set(value)
+
+    def value(self):
+        return self.get()
+
+    def singleStep(self):
+        return self["increment "]
+        
+    def textFromValue(self):
+        return str(self.get())
+
+    def setTextvariable(self, textvariable):
+        self["textvariable"] = textvariable
+
+
+class Line(ttk.Separator):
+
+    def __init__(self, orientation=HORIZONTAL, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        if orientation == VERTICAL :
+            super().__init__(master=parent, orient="vertical")
+        elif orientation == HORIZONTAL:
+            super().__init__(master=parent, orient="horizontal")
+
+class Scollbar(ttk.Scrollbar):
+
+    def __init__(self, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(master=parent)    
+
+
+class ScrolledWindow(tix.ScrolledWindow):
+
+    def __init__(self, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(master=parent)
+        self.w = self.window   
+    
+    def addWidget(self, widget):
+        #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
+        widget.pack(fill=BOTH, expand=YES)
+
+    def childrens(self):
+        return self.winfo_children()
