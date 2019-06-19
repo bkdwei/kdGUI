@@ -45,10 +45,10 @@ class Window(tix.Tk):
 
     def addWidget(self, widget, row=None, column=None, expand=NO):
         if self.layout == VERTICAL:
-#             print(self.rowIndex, self.columnIndex,
-#                   widget.widgetName)
-#             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
-#             self.rowIndex += 1
+            #             print(self.rowIndex, self.columnIndex,
+            #                   widget.widgetName)
+            #             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
+            #             self.rowIndex += 1
             widget.pack(fill=BOTH, expand=expand)
         elif self.layout == HORIZONTAL:
             #             widget.grid(row=self.rowIndex, column=self.columnIndex)
@@ -66,7 +66,7 @@ class Window(tix.Tk):
 
     def showMaximized(self):
         #         w, h = self.maxsize()
-        if platform == "win32" :
+        if platform == "win32":
             self.state("zoomed")
             return
         else:
@@ -92,13 +92,17 @@ class Window(tix.Tk):
     def setCenterPlace(self):
         windowWidth = self.winfo_reqwidth()
         windowHeight = self.winfo_reqheight()
-         
-        # Gets both half the screen width/height and window width/height
-        positionRight = int(self.winfo_screenwidth() / 3 - windowWidth / 2)
-        positionDown = int(self.winfo_screenheight() / 3 - windowHeight / 2)
-         
+
+        # Gets both half the screen width/height and window
+        # width/height
+        positionRight = int(
+            self.winfo_screenwidth() / 3 - windowWidth / 2)
+        positionDown = int(
+            self.winfo_screenheight() / 3 - windowHeight / 2)
+
         # Positions the window in the center of the page.
-        self.geometry("+{}+{}".format(positionRight, positionDown))
+        self.geometry(
+            "+{}+{}".format(positionRight, positionDown))
 
 
 class ThemedWindow(ThemedTk):
@@ -307,7 +311,8 @@ class Container(ttk.LabelFrame):
                 widget.grid(row=0, column=0, sticky="wens")
                 self.empty_flag = False
             elif row != None and column != None:
-                widget.grid(row=row, column=column, sticky="wens")
+                widget.grid(
+                    row=row, column=column, sticky="wens")
 
     def childrens(self):
         return self.winfo_children()
@@ -795,7 +800,7 @@ class Spinbox(tk.Spinbox):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(master=parent, increment=1 , from_=-9999, to=9999)
+        super().__init__(master=parent, increment=1, from_=-9999, to=9999)
         self.value = tk.IntVar()
         self.setTextvariable(self.value)
         self.setSingleStep(1)
@@ -819,10 +824,10 @@ class Spinbox(tk.Spinbox):
     def setSingleStep(self, step):
         self["increment"] = step
 
-    def setValues(self, values:tuple):
+    def setValues(self, values: tuple):
         self["values"] = values
 
-    def setValue(self, value:int):
+    def setValue(self, value: int):
         self.value.set(value)
 
     def value(self):
@@ -830,7 +835,7 @@ class Spinbox(tk.Spinbox):
 
     def singleStep(self):
         return self["increment "]
-        
+
     def textFromValue(self):
         return str(self.get())
 
@@ -844,7 +849,7 @@ class Line(ttk.Separator):
         if not parent:
             global _default_root
             parent = _default_root
-        if orientation == VERTICAL :
+        if orientation == VERTICAL:
             super().__init__(master=parent, orient="vertical")
         elif orientation == HORIZONTAL:
             super().__init__(master=parent, orient="horizontal")
@@ -856,7 +861,7 @@ class Scollbar(ttk.Scrollbar):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(master=parent)    
+        super().__init__(master=parent)
 
 
 class ScrolledWindow(tix.ScrolledWindow):
@@ -866,8 +871,8 @@ class ScrolledWindow(tix.ScrolledWindow):
             global _default_root
             parent = _default_root
         super().__init__(master=parent)
-        self.w = self.window   
-    
+        self.w = self.window
+
     def addWidget(self, widget):
         #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
         widget.pack(fill=BOTH, expand=YES)
@@ -899,8 +904,26 @@ class Progressbar(ttk.Progressbar):
     def setRange(self, length):
         self["length"] = length
 
-    def setValue(self, value:int):
+    def setValue(self, value: int):
         self["value"] = value
 
     def setVariable(self, variable):
         self["variable"] = variable
+
+
+def slot(fn):
+    def find_slot(*args):
+        fn_name = fn.__name__
+        if "on_" == fn_name[0:3]:
+            objs = fn_name[3:].split("_")
+            if len(objs) != 2:
+                raise("format is not correct for " + fn_name)
+#             widget = fn.__globals__[objs[0]]
+#             getattr(widget, objs[1])(fn)
+            else:
+                widget = getattr(args[0], objs[0])
+                getattr(widget, objs[1])(
+                    lambda: fn(*args))
+        else:
+            raise("format is not correct for " + fn_name)
+    return find_slot
