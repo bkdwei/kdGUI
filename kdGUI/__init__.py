@@ -3,6 +3,7 @@ Created on 2019年5月25日
 
 @author: bkd
 '''
+from sys import platform
 from tkinter import tix
 from tkinter import ttk
 from tkinter.constants import *
@@ -65,9 +66,13 @@ class Window(tix.Tk):
 
     def showMaximized(self):
         #         w, h = self.maxsize()
-        w = self.winfo_screenwidth()
-        h = self.winfo_screenheight()
-        self.geometry("{}x{}".format(w, h))
+        if platform == "win32" :
+            self.state("zoomed")
+            return
+        else:
+            w = self.winfo_screenwidth()
+            h = self.winfo_screenheight()
+            self.geometry("{}x{}".format(w, h))
 
     def showFullScreen(self):
         self.attributes("-fullscreen", True)
@@ -83,6 +88,17 @@ class Window(tix.Tk):
 
     def setGeometry(self, width, height):
         self.geometry("%dx%d" % (width, height))
+
+    def setCenterPlace(self):
+        windowWidth = self.winfo_reqwidth()
+        windowHeight = self.winfo_reqheight()
+         
+        # Gets both half the screen width/height and window width/height
+        positionRight = int(self.winfo_screenwidth() / 3 - windowWidth / 2)
+        positionDown = int(self.winfo_screenheight() / 3 - windowHeight / 2)
+         
+        # Positions the window in the center of the page.
+        self.geometry("+{}+{}".format(positionRight, positionDown))
 
 
 class ThemedWindow(ThemedTk):
@@ -288,10 +304,10 @@ class Container(ttk.LabelFrame):
             widget.pack(fill=BOTH, expand=expand, side=LEFT)
         elif self.layout == "grid":
             if row == None and column == None and self.empty_flag:
-                widget.grid(row=0, column=0)
+                widget.grid(row=0, column=0, sticky="wens")
                 self.empty_flag = False
             elif row != None and column != None:
-                widget.grid(row=row, column=column)
+                widget.grid(row=row, column=column, sticky="wens")
 
     def childrens(self):
         return self.winfo_children()
@@ -833,6 +849,7 @@ class Line(ttk.Separator):
         elif orientation == HORIZONTAL:
             super().__init__(master=parent, orient="horizontal")
 
+
 class Scollbar(ttk.Scrollbar):
 
     def __init__(self, parent=None):
@@ -856,4 +873,4 @@ class ScrolledWindow(tix.ScrolledWindow):
         widget.pack(fill=BOTH, expand=YES)
 
     def childrens(self):
-        return self.winfo_children()
+        return self.w.winfo_children()
