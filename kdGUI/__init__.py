@@ -874,3 +874,33 @@ class ScrolledWindow(tix.ScrolledWindow):
 
     def childrens(self):
         return self.w.winfo_children()
+
+
+class Progressbar(ttk.Progressbar):
+
+    def __init__(self, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(master=parent)
+
+    def maximum(self):
+        return self["maximum"]
+
+    def orientation(self):
+        return self["orient"]
+
+    def setMaximum(self, maximum):
+        self["maximum"] = maximum
+
+    def setOrientation(self, orientation):
+        self["orient"] = orientation
+
+    def setRange(self, length):
+        self["length"] = length
+
+    def setValue(self, value:int):
+        self["value"] = value
+
+    def setVariable(self, variable):
+        self["variable"] = variable
