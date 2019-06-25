@@ -4,19 +4,16 @@ Created on 2019年5月25日
 @author: bkd
 '''
 from sys import platform
-from tkinter import tix
 from tkinter import ttk
 from tkinter.constants import *
-
-from ttkthemes import ThemedTk
-from ttkthemes._widget import ThemedWidget
 
 import tkinter as tk
 
 _default_root = None
+GRID = "grid"
 
 
-class Window(tix.Tk):
+class Window(tk.Tk):
 
     GRID = "grid"
 
@@ -105,188 +102,6 @@ class Window(tix.Tk):
             "+{}+{}".format(positionRight, positionDown))
 
 
-class ThemedWindow(ThemedTk):
-
-    GRID = "grid"
-
-    def __init__(self, title=None):
-        if title:
-            super().__init__(className=title, theme="aquativo")
-        else:
-            super().__init__()
-        self.layout = VERTICAL
-        self.rowIndex = 0
-        self.columnIndex = 0
-
-        global _default_root
-        _default_root = self
-        self.statusbar = Label("状态栏", self)
-        self.statusbar.setAnchor("w")
-#         self.addWidget(self.statusbar, expand=YES)
-        self.statusbar.pack(
-            fill=BOTH, expand=NO, side=BOTTOM)
-
-    def run(self):
-        self.mainloop()
-
-    def setLayout(self, layout):
-        self.layout = layout
-
-    def getLayout(self):
-        return self.layout
-
-    def addWidget(self, widget, row=None, column=None, expand=NO):
-        if self.layout == VERTICAL:
-            print(self.rowIndex, self.columnIndex,
-                  widget.widgetName)
-#             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
-#             self.rowIndex += 1
-            widget.pack(fill=BOTH, expand=expand)
-        elif self.layout == HORIZONTAL:
-            #             widget.grid(row=self.rowIndex, column=self.columnIndex)
-            #             self.columnIndex += 1
-            widget.pack(fill=BOTH, expand=expand, side=LEFT)
-        elif self.layout == self.GRID:
-            if row == None:
-                raise RuntimeError("row can not be None")
-            if column == None:
-                raise RuntimeError("column can not be None")
-            widget.grid(row=row, column=column)
-
-    def setTitle(self, title):
-        self.title(title)
-
-    def setTheme(self, theme_name):
-        ThemedWidget.set_theme(self, theme_name)
-
-    def showMaximized(self):
-        #         w, h = self.maxsize()
-        w = self.winfo_screenwidth()
-        h = self.winfo_screenheight()
-        self.geometry("{}x{}".format(w, h))
-
-    def showFullScreen(self):
-        self.attributes("-fullscreen", True)
-
-    def childrens(self):
-        return self.winfo_children()
-
-    def showMessage(self, msg):
-        self.statusbar.setText(msg)
-
-    def addMenu(self, menuBar):
-        self.config(menu=menuBar)
-
-    def setGeometry(self, width, height):
-        self.geometry("%dx%d" % (width, height))
-
-
-class VerticalLayout(ttk.LabelFrame):
-
-    def __init__(self, text=None, parent=None):
-        if not parent:
-            global _default_root
-            parent = _default_root
-        super().__init__(text=text, master=parent,
-                         relief='sunken')
-        self.rowIndex = 0
-
-    def text(self):
-        return self["text"]
-
-    def setText(self, text):
-        self["text"] = text
-
-    def setRowIndex(self, index):
-        self.rowIndex = index
-
-    def addWidget(self, widget):
-        #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
-        widget.pack(fill=BOTH, expand=YES)
-
-    def childrens(self):
-        return self.winfo_children()
-
-    def getLayout(self):
-        return VERTICAL
-
-
-class HorizontalLayout(ttk.LabelFrame):
-
-    def __init__(self, text=None, parent=None):
-        if not parent:
-            global _default_root
-            parent = _default_root
-        super().__init__(text=text, master=parent,
-                         relief='sunken')
-#         self.grid(column=0, row=0, sticky=(N, W, E, S))
-#         self.columnconfigure(0, weight=1)
-#         self.rowconfigure(0, weight=1)
-#         self.cnf = {"text":text, "bd":10, "height":300, "width":300}
-        self.columnIndex = 0
-#         self["bg"] = "blue"
-#         self["bd"] = 5
-#         self["height"] = 300
-#         self["width"] = 300
-
-    def text(self):
-        return self["text"]
-
-    def setText(self, text):
-        self["text"] = text
-
-    def setHeight(self, height):
-        self["height"] = height
-
-    def addWidget(self, widget):
-        #         widget.grid(row=0, column=self.columnIndex, sticky='nsew')
-        self.columnIndex += 1
-        widget.pack(fill=BOTH, expand=YES, side=LEFT)
-
-    def childrens(self):
-        return self.winfo_children()
-
-    def getLayout(self):
-        return HORIZONTAL
-
-
-class GridLayout(ttk.LabelFrame):
-
-    def __init__(self, text=None, parent=None):
-        if not parent:
-            global _default_root
-            parent = _default_root
-        super().__init__(text=text, master=parent,
-                         relief='sunken')
-        self.empty_flag = True
-
-    def text(self):
-        return self["text"]
-
-    def setText(self, text):
-        self["text"] = text
-
-    def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
-        #         self.columnconfigure(column, weight=1)
-        #         self.rowconfigure(row, weight=1)
-        if row == None and column == None and self.empty_flag:
-            widget.grid(row=0, column=0, rowspan=rowspan,
-                        columnspan=columnspan, sticky=N + S + W + E)
-            self.empty_flag = False
-        elif row != None and column != None:
-            widget.grid(row=row, column=column, rowspan=rowspan,
-                        columnspan=columnspan, sticky=N + S + W + E)
-
-    def setWidth(self, width):
-        self["width"] = width
-
-    def childrens(self):
-        return self.winfo_children()
-
-    def getLayout(self):
-        return "grid"
-
-
 class Container(ttk.LabelFrame):
 
     def __init__(self, text=None, parent=None):
@@ -298,6 +113,12 @@ class Container(ttk.LabelFrame):
         self.layout = VERTICAL
         self.empty_flag = True
 
+    def text(self):
+        return self["text"]
+
+    def setText(self, text):
+        self["text"] = text
+        
     def setLayout(self, layout):
         self.layout = layout
 
@@ -319,6 +140,51 @@ class Container(ttk.LabelFrame):
 
     def getLayout(self):
         return self.layout
+
+
+class VerticalLayout(Container):
+
+    def __init__(self, text=None, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, master=parent,
+                         relief='sunken')
+        self.setLayout(VERTICAL)
+
+
+class HorizontalLayout(Container):
+
+    def __init__(self, text=None, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, master=parent,
+                         relief='sunken')
+        self.setLayout(HORIZONTAL)
+
+
+class GridLayout(Container):
+
+    def __init__(self, text=None, parent=None):
+        if not parent:
+            global _default_root
+            parent = _default_root
+        super().__init__(text=text, master=parent,
+                         relief='sunken')
+        self.empty_flag = True
+        self.setLayout(GRID)
+
+#     def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
+#         #         self.columnconfigure(column, weight=1)
+#         #         self.rowconfigure(row, weight=1)
+#         if row == None and column == None and self.empty_flag:
+#             widget.grid(row=0, column=0, rowspan=rowspan,
+#                         columnspan=columnspan, sticky=N + S + W + E)
+#             self.empty_flag = False
+#         elif row != None and column != None:
+#             widget.grid(row=row, column=column, rowspan=rowspan,
+#                         columnspan=columnspan, sticky=N + S + W + E)
 
 
 class Label(ttk.Label):
@@ -863,22 +729,21 @@ class Scollbar(ttk.Scrollbar):
             parent = _default_root
         super().__init__(master=parent)
 
-
-class ScrolledWindow(tix.ScrolledWindow):
-
-    def __init__(self, parent=None):
-        if not parent:
-            global _default_root
-            parent = _default_root
-        super().__init__(master=parent)
-        self.w = self.window
-
-    def addWidget(self, widget):
-        #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
-        widget.pack(fill=BOTH, expand=YES)
-
-    def childrens(self):
-        return self.w.winfo_children()
+# class ScrolledWindow(tix.ScrolledWindow):
+# 
+#     def __init__(self, parent=None):
+#         if not parent:
+#             global _default_root
+#             parent = _default_root
+#         super().__init__(master=parent)
+#         self.w = self.window
+# 
+#     def addWidget(self, widget):
+#         #         widget.grid(row=self.rowIndex, column=0, sticky='nsew')
+#         widget.pack(fill=BOTH, expand=YES)
+# 
+#     def childrens(self):
+#         return self.w.winfo_children()
 
 
 class Progressbar(ttk.Progressbar):
@@ -912,6 +777,7 @@ class Progressbar(ttk.Progressbar):
 
 
 def slot(fn):
+
     def find_slot(*args):
         fn_name = fn.__name__
         if "on_" == fn_name[0:3]:
@@ -926,4 +792,5 @@ def slot(fn):
                     lambda: fn(*args))
         else:
             raise("format is not correct for " + fn_name)
+
     return find_slot

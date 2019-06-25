@@ -30,7 +30,7 @@ l.grid(row=0, column=0)
 # print(locals())
 
 _separator = ttk.Separator(root, orient="horizontal")
-_separator.grid(row=1, column=0, sticky="nswe")
+_separator.grid(row=1, column=0, sticky="we")
 l = Label(root, text="Hello, Tkinter!")
 l.grid(row=2, column=0)
         

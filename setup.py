@@ -22,7 +22,7 @@ setup(
     platforms=["any"],
     
 #     需要安装的依赖
-    install_requires=["ttkthemes"],
+    install_requires=[],
     packages=find_packages(),
     zip_safe=False,
     include_package_data=True,
