@@ -14,7 +14,7 @@ GRID = "grid"
 
 
 # 在垂直和水平容器自动排版
-def autoPack(widget, expand=NO):
+def autoPack(widget, expand=YES):
     if widget.master.getLayout() == VERTICAL :
         widget.pack(fill=BOTH, expand=expand)
     elif widget.master.getLayout() == HORIZONTAL :
@@ -55,18 +55,23 @@ class Window(tk.Tk):
     def setLayout(self, layout):
         self.layout = layout
 
+    def getLayout(self):
+        return self.layout
+    
     def addWidget(self, widget, row=None, column=None, expand=NO):
-        if self.layout == VERTICAL:
+#         if self.layout == VERTICAL:
             #             print(self.rowIndex, self.columnIndex,
             #                   widget.widgetName)
             #             widget.grid(row=self.rowIndex, column=self.columnIndex, sticky="w" + "e")
             #             self.rowIndex += 1
-            widget.pack(fill=BOTH, expand=expand)
-        elif self.layout == HORIZONTAL:
+#             widget.pack(fill=BOTH, expand=expand)
+#         elif self.layout == HORIZONTAL:
             #             widget.grid(row=self.rowIndex, column=self.columnIndex)
             #             self.columnIndex += 1
-            widget.pack(fill=BOTH, expand=expand, side=LEFT)
-        elif self.layout == self.GRID:
+#             widget.pack(fill=BOTH, expand=expand, side=LEFT)
+#         elif 
+        global GRID
+        if self.layout == GRID:
             if row == None:
                 raise RuntimeError("row can not be None")
             if column == None:
@@ -148,7 +153,8 @@ class Container(ttk.LabelFrame):
                 self.empty_flag = False
             elif row != None and column != None:
                 widget.grid(
-                    row=row, column=column, sticky="wens")
+                    row=row, column=column, rowspan=1,
+                        columnspan=1, sticky=N + S + W + E)
 
     def childrens(self):
         return self.winfo_children()
@@ -163,8 +169,8 @@ class VerticalLayout(Container):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, master=parent,
-                         relief='sunken')
+        super().__init__(text=text, parent=parent
+                        )
         self.setLayout(VERTICAL)
 
 
@@ -174,9 +180,9 @@ class HorizontalLayout(Container):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, master=parent,
-                         relief='sunken')
+        super().__init__(text=text, parent=parent)
         self.setLayout(HORIZONTAL)
+        autoPack(self)
 
 
 class GridLayout(Container):
@@ -185,10 +191,11 @@ class GridLayout(Container):
         if not parent:
             global _default_root
             parent = _default_root
-        super().__init__(text=text, master=parent,
-                         relief='sunken')
+        super().__init__(text=text, parent=parent)
         self.empty_flag = True
+        global GRID
         self.setLayout(GRID)
+        autoPack(self)
 
 #     def addWidget(self, widget, row, column, rowspan=1, columnspan=1):
 #         #         self.columnconfigure(column, weight=1)
@@ -504,7 +511,10 @@ class ComboBox(ttk.Combobox):
         self.values.clear()
 
     def currentText(self):
-        return self.values[self.current()]
+        if self.current() == -1:
+            return self.get()
+        else:
+            return self.values[self.current()]
 
     def setCurrentIndex(self, index):
         self.current(newindex=index)
@@ -780,6 +790,7 @@ class Progressbar(ttk.Progressbar):
             global _default_root
             parent = _default_root
         super().__init__(master=parent)
+        autoPack(self)
 
     def maximum(self):
         return self["maximum"]

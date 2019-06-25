@@ -17,9 +17,8 @@ def run():
         
 app = Window("abk")
 p = Progressbar(app)
-app.addWidget(p)
 p.setMaximum(10000)
-p.setOrientation("vertical")
+p.setOrientation("horizontal")
 p["mode"] = "determinate"
 # p.start(1)
 t = threading.Thread(target=run)
