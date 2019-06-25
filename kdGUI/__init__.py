@@ -688,9 +688,9 @@ class Text(tk.Text):
         self.append(text)
 
     def addVerticalScrollbar(self):
-        scroll = tk.Scrollbar(self.master)
+        self.pack(side=LEFT, fill=BOTH)
+        scroll = Scollbar(self.master)
         scroll.pack(side=RIGHT, fill=Y)
-        self.pack(side=LEFT, fill=Y)
         scroll.config(command=self.yview)
         self.config(yscrollcommand=scroll.set)
 
