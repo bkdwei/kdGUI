@@ -13,26 +13,41 @@ _default_root = None
 GRID = "grid"
 
 
-class Window(tk.Tk):
+# 在垂直和水平容器自动排版
+def autoPack(widget, expand=NO):
+    if widget.master.getLayout() == VERTICAL :
+        widget.pack(fill=BOTH, expand=expand)
+    elif widget.master.getLayout() == HORIZONTAL :
+        widget.pack(fill=BOTH, expand=expand, side=LEFT)
 
-    GRID = "grid"
+
+class Window(tk.Tk):
 
     def __init__(self, title=None):
         if title:
             super().__init__(className=title)
         else:
             super().__init__()
+            
+        # 布局设置
         self.layout = VERTICAL
         self.rowIndex = 0
         self.columnIndex = 0
 
+        # 全局root设置
         global _default_root
         _default_root = self
+        
+        # body设置
+        self.body = VerticalLayout("", self)
+        self.addWidget(self.body)
+        
+        # 状态栏设置
         self.statusbar = Label("状态栏", self)
         self.statusbar.setAnchor("w")
-#         self.addWidget(self.statusbar, expand=YES)
-#         self.statusbar.pack(
-#             fill=BOTH, expand=NO, side=BOTTOM)
+        self.addWidget(self.statusbar, expand=YES)
+        self.statusbar.pack(
+            fill=BOTH, expand=NO, side=BOTTOM)
 
     def run(self):
         self.mainloop()
@@ -194,6 +209,7 @@ class Label(ttk.Label):
 
     def __init__(self, text=None, parent=None):
         super().__init__(parent, text=text)
+        autoPack(self)
 
     def text(self):
         return self["text"]
@@ -240,6 +256,7 @@ class PushButton(ttk.Button):
     def __init__(self, text=None, parent=None):
         super().__init__(parent, text=text)
         self.cnf = {"text": text}
+        autoPack(self)
 
     def click(self, function):
         self["command"] = function
@@ -267,6 +284,7 @@ class RadioButton(ttk.Radiobutton):
             self.setGroup(RadioButtonGroup)
 
         self.data = None
+        autoPack(self)
 
     def text(self):
         return self["text"]
@@ -312,6 +330,7 @@ class CheckButton(ttk.Checkbutton):
         super().__init__(master=parent,
                          text=text, variable=self.checkState)
         self.items = {}
+        autoPack(self)
 
     def setChecked(self, boolean):
         if boolean:
@@ -339,6 +358,7 @@ class LineEdit(ttk.Entry):
         self["textvariable"] = self.contents
         if defaultValue:
             self.contents.set(defaultValue)
+        autoPack(self)
 
     def text(self):
         return self.contents.get()
@@ -378,6 +398,7 @@ class ListWidget(tk.Listbox):
 
     def __init__(self, parent=None):
         super().__init__(master=parent)
+        autoPack(self)
 
     def addItem(self, item):
         self.insert(END, item)
@@ -419,6 +440,7 @@ class TreeWidget(ttk.Treeview):
 
     def __init__(self, parent=None):
         super().__init__(master=parent)
+        autoPack(self)
 
     def addTopLevelItem(self, item):
         self.insert('', 'end', id(item), text=item)
@@ -465,6 +487,7 @@ class ComboBox(ttk.Combobox):
         self["textvariable"] = self.value
         self.values = []
         self["value"] = self.values
+        autoPack(self)
 
     def addItems(self, items):
         self.values.extend(items)
@@ -555,6 +578,7 @@ class PropertyEditor(ttk.Frame):
         super().__init__(master=parent, relief='sunken')
         self.rowIndex = -1
         self.value_change_signal = kdSignal()
+        autoPack(self)
 
     def addLabel(self, text, row: int=None):
         widget = Label(text, self)
@@ -635,6 +659,7 @@ class Text(tk.Text):
             global _default_root
             parent = _default_root
         super().__init__(master=parent)
+        autoPack(self)
 
     def append(self, text):
         self.insert(END, text)
@@ -670,6 +695,7 @@ class Spinbox(tk.Spinbox):
         self.value = tk.IntVar()
         self.setTextvariable(self.value)
         self.setSingleStep(1)
+        autoPack(self)
 
     def maximum(self):
         return self["to"]
@@ -719,6 +745,7 @@ class Line(ttk.Separator):
             super().__init__(master=parent, orient="vertical")
         elif orientation == HORIZONTAL:
             super().__init__(master=parent, orient="horizontal")
+        autoPack(self)
 
 
 class Scollbar(ttk.Scrollbar):
